@@ -11,6 +11,12 @@ import {
   Clock,
   MessageCircle,
   ScanLine,
+  Telescope,
+  Bug,
+  X,
+  Microscope,
+  Database,
+  Radio,
 } from "lucide-react";
 import { useI18n, languageToLocale } from "../i18n";
 
@@ -48,54 +54,32 @@ export default function Dashboard({
   isActive,
 }: DashboardProps) {
   const { t, language } = useI18n();
+  const [showPestScopeDialog, setShowPestScopeDialog] = useState(false);
+  
   const features = [
     {
-      id: "chatbot",
-      icon: MessageCircle,
-      title: t("aiChatBotTitle"),
-      subtitle: t("aiChatBotDesc"),
-      description: t("aiChatBotDesc"),
-      color: "bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500",
+      id: "farmer-scope",
+      icon: Telescope,
+      title: t("farmscope"),
+      subtitle: "Get personalized crop advisories and weather-based recommendations",
+      description: "Real-time farming insights tailored to your location",
+      color: "bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500",
     },
     {
-      id: "guides",
-      icon: BookOpen,
-      title: t("solutionsTitle"),
-      subtitle: t("solutionsDesc"),
-      description: t("solutionsDesc"),
-      color: "bg-gradient-to-br from-emerald-500 via-green-500 to-lime-500",
-    },
-    {
-      id: "calendar",
-      icon: Calendar,
-      title: t("advisoryCalendar"),
-      subtitle: t("planAdvisorySub"),
-      description: t("planAdvisorySub"),
-      color: "bg-gradient-to-br from-teal-500 via-emerald-500 to-green-500",
+      id: "pest-scope",
+      icon: Bug,
+      title: t("pestoscope"),
+      subtitle: "Identify pests and diseases with expert treatment solutions",
+      description: "Complete pest management database with organic remedies",
+      color: "bg-gradient-to-br from-orange-500 via-red-500 to-pink-500",
     },
     {
       id: "tracking",
       icon: ClipboardList,
       title: t("mySuccessLogs"),
       subtitle: t("trackBest"),
-      description: t("trackBest"),
+      description: "Monitor your farming activities and track progress",
       color: "bg-gradient-to-br from-lime-500 via-green-500 to-emerald-500",
-    },
-    // {
-    //   id: "community",
-    //   icon: Users,
-    //   title: t("communityHeader"),
-    //   subtitle: t("communitySub"),
-    //   description: t("communitySub"),
-    //   color: "bg-gradient-to-br from-purple-500 to-purple-600",
-    // },
-    {
-      id: "suppliers",
-      icon: MapPin,
-      title: t("localSuppliers"),
-      subtitle: t("findSuppliersSub"),
-      description: t("certifiedSuppliers"),
-      color: "bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500",
     },
   ];
 
@@ -329,28 +313,35 @@ export default function Dashboard({
           <h2 className="text-lg font-bold text-primary-600 mb-4">
             {t("What Else ?")}
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {features
-              .filter((feature) => feature.id !== "chatbot")
-              .map((feature) => {
+          <div className="space-y-4">
+            {features.map((feature) => {
                 const Icon = feature.icon;
                 return (
                   <button
                     key={feature.id}
-                    onClick={() => onFeatureSelect(feature.id)}
-                    className="flex flex-col items-start bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 active:scale-95 p-4 text-left border-l-4 border-primary-500"
+                    onClick={() => {
+                      if (feature.id === "pest-scope") {
+                        setShowPestScopeDialog(true);
+                      } else {
+                        onFeatureSelect(feature.id);
+                      }
+                    }}
+                    className="w-full bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-95 p-5 text-left border-l-4 border-primary-500 flex items-center gap-4"
                   >
                     <div
-                      className={`w-12 h-12 ${feature.color} rounded-xl flex items-center justify-center mb-3`}
+                      className={`w-16 h-16 ${feature.color} rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg`}
                     >
-                      <Icon size={24} className="text-white" />
+                      <Icon size={28} className="text-white" />
                     </div>
-                    <h3 className="font-semibold text-primary-700 text-sm mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="text-xs text-gray-600 leading-tight">
-                      {feature.subtitle}
-                    </p>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-primary-700 text-base mb-1">
+                        {feature.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-snug">
+                        {feature.subtitle}
+                      </p>
+                    </div>
+                    <ArrowRight size={24} className="text-primary-500 flex-shrink-0" />
                   </button>
                 );
               })}
@@ -421,6 +412,82 @@ export default function Dashboard({
           <p className="text-primary-800 text-sm">{t("dailyTipText")}</p>
         </div>
       </div>
+
+      {/* PestScope Selection Dialog */}
+      {showPestScopeDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full relative animate-in fade-in zoom-in duration-300">
+            {/* Close Button */}
+            <button
+              onClick={() => setShowPestScopeDialog(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Header */}
+            <div className="bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+                  <Bug size={28} className="text-white" />
+                </div>
+                <h2 className="text-2xl font-bold">Pestoscope</h2>
+              </div>
+              <p className="text-orange-50 text-sm">
+                Choose how you want to access pest information
+              </p>
+            </div>
+
+            {/* Options */}
+            <div className="p-6 space-y-4">
+              {/* Real-time Advisories - Coming Soon */}
+              <button
+                disabled
+                className="w-full p-4 border-2 border-gray-300 rounded-xl bg-gray-50 opacity-60 cursor-not-allowed"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Radio size={24} className="text-gray-400" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold text-gray-500">Real-time Advisories</h3>
+                      <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full text-xs font-semibold">
+                        Coming Soon
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-400">
+                      Get instant alerts and real-time pest advisories for your location
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Knowledge Base - Active */}
+              <button
+                onClick={() => {
+                  setShowPestScopeDialog(false);
+                  onFeatureSelect("pest-scope");
+                }}
+                className="w-full p-4 border-2 border-orange-500 rounded-xl bg-gradient-to-br from-orange-50 to-red-50 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Database size={24} className="text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="font-bold text-orange-700 mb-1">Knowledge Base</h3>
+                    <p className="text-sm text-orange-600">
+                      Browse comprehensive pest database and management solutions
+                    </p>
+                  </div>
+                  <ArrowRight size={20} className="text-orange-500 flex-shrink-0 mt-1" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
